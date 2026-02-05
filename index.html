@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>DailyDishh Kitchen – Premium Menu</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body { 
+      margin: 0; 
+      font-family: 'Quicksand', sans-serif; 
+      background: #141414; /* Premium Dark Background */
+      color: #fff;
+      padding-bottom: 80px; 
+    }
+
+    /* --- HEADER --- */
+    header {
+      background: rgba(20, 20, 20, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      padding: 10px 16px 16px 16px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 1px solid #333;
+      transition: transform 0.3s ease;
+    }
+    header.hide { transform: translateY(-110%); }
+
+    .topbar { max-width: 1200px; margin: auto; display: flex; flex-direction: column; gap: 12px; }
+
+    .brand {
+      font-family: 'Pacifico', cursive;
+      font-size: 26px;
+      color: #FFC107;
+      text-shadow: 0 2px 10px rgba(255, 193, 7, 0.2);
+    }
+    .brand span { color: #fff; font-family: 'Quicksand', sans-serif; font-weight: 700; }
+
+    /* --- TICKER --- */
+    .header-ticker-container {
+        background: linear-gradient(90deg, #000, #1a1a1a);
+        color: #D4AF37; 
+        border: 1px solid #333;
+        font-size: 11px;
+        font-weight: 700;
+        letter-spacing: 1px;
+        text-transform: uppercase;
+        overflow: hidden;
+        white-space: nowrap;
+        padding: 6px 0;
+        border-radius: 4px;
+    }
+    .header-ticker-text {
+        display: inline-block;
+        animation: header-scroll 15s linear infinite;
+        padding-left: 100%;
+    }
+    @keyframes header-scroll { 100% { transform: translateX(-100%); } }
+
+    /* --- PLANS BUTTONS --- */
+    .plans-bar {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding-bottom: 5px;
+    }
+    .plans-bar::-webkit-scrollbar { display: none; }
+
+    .plan-btn {
+      padding: 8px 14px;
+      border-radius: 50px;
+      font-weight: 800;
+      font-size: 11px;
+      color: #000;
+      text-decoration: none;
+      white-space: nowrap;
+      flex-shrink: 0;
+      background: #FFC107; /* Gold Buttons */
+      box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+      border: 1px solid #FFC107;
+    }
+    .plan-btn.dark {
+        background: transparent;
+        color: #FFC107;
+        border: 1px solid #FFC107;
+    }
+
+    /* --- SEARCH --- */
+    .search-box input {
+      width: 100%;
+      padding: 12px 20px;
+      border-radius: 30px;
+      border: 1px solid #333;
+      outline: none;
+      font-size: 14px;
+      background: #1e1e1e;
+      color: #fff;
+      font-family: 'Quicksand', sans-serif;
+      font-weight: 600;
+    }
+    .search-box input:focus { border-color: #FFC107; }
+
+    .container { max-width: 1200px; margin: auto; padding: 20px 15px; }
+
+    /* --- SLIDER --- */
+    .slider-container {
+      position: relative;
+      width: 100%;
+      height: 180px;
+      border-radius: 20px;
+      overflow: hidden;
+      margin-bottom: 25px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      border: 1px solid #333;
+    }
+    .slider-container img {
+      position: absolute;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      object-fit: cover;
+      opacity: 0;
+      transition: opacity 1s ease-in-out;
+    }
+    .slider-container img.active { opacity: 1; }
+
+    /* --- SUPER COMBO LINK --- */
+    .super-btn {
+      display: block;
+      width: 100%;
+      background: linear-gradient(135deg, #FFC107, #FF6F00);
+      color: #000;
+      text-align: center;
+      padding: 15px;
+      font-size: 16px;
+      font-weight: 900;
+      text-decoration: none;
+      border-radius: 12px;
+      margin-bottom: 30px;
+      box-shadow: 0 5px 20px rgba(255, 111, 0, 0.2);
+      text-transform: uppercase;
+      letter-spacing: 1px;
+    }
+
+    /* --- SECTION TITLE --- */
+    .section-title {
+        font-size: 18px;
+        font-weight: 800;
+        color: #FFC107;
+        margin: 10px 0 15px 0;
+        padding-left: 5px;
+        border-left: 4px solid #FFC107;
+        line-height: 1;
+    }
+
+    /* --- GRID --- */
+    .grid { 
+      display: grid; 
+      grid-template-columns: repeat(2, 1fr); 
+      gap: 15px; 
+    }
+    @media (min-width: 768px) {
+      .grid { grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+    }
+
+    /* --- CARD DESIGN (DARK) --- */
+    .card {
+      background: #1e1e1e;
+      border-radius: 16px;
+      overflow: hidden;
+      border: 1px solid #333;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+    }
+    .card img { width: 100%; height: 130px; object-fit: cover; opacity: 0.9; }
+    .card-body { padding: 12px; display: flex; flex-direction: column; flex: 1; justify-content: space-between; }
+    .item-name { font-size: 14px; font-weight: 800; margin-bottom: 6px; color: #fff; line-height: 1.3; }
+    
+    .price-display {
+      font-size: 15px; font-weight: 900; color: #FFC107; margin-bottom: 10px;
+      display: flex; align-items: center; flex-wrap: wrap;
+    }
+    .price-display del { color: #666; font-size: 11px; font-weight: 600; margin-right: 6px; }
+    .save-badge { background: #333; color: #4caf50; font-size: 9px; font-weight: 800; padding: 2px 6px; border-radius: 4px; margin-left: auto; border: 1px solid #444; }
+
+    /* --- COMBO FULL WIDTH --- */
+    .card.combo-full-width {
+      grid-column: 1 / -1; 
+      border: 1px solid #FFC107; /* Gold border for combos */
+      background: linear-gradient(145deg, #1e1e1e, #252525);
+    }
+    .card.combo-full-width img { height: 150px; }
+    .card.combo-full-width .card-body { padding: 15px; }
+    .card.combo-full-width .item-name { font-size: 18px; color: #FFC107; }
+    
+    .combo-list { padding: 0; margin: 0 0 15px 0; list-style: none; display: flex; flex-wrap: wrap; gap: 5px; }
+    .combo-list li { background: #333; color: #ccc; font-size: 10px; padding: 4px 8px; border-radius: 4px; font-weight: 600; }
+
+    /* --- CONTROLS --- */
+    .size-select {
+      width: 100%; padding: 8px; margin-bottom: 8px; border-radius: 8px;
+      border: 1px solid #444; background: #2a2a2a; color: #fff; font-weight: 700; font-size: 11px; outline: none;
+    }
+    
+    .add-btn {
+      width: 100%; background: #fff; color: #000; border: none; padding: 10px;
+      border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 900;
+      text-transform: uppercase;
+    }
+    .add-btn:active { transform: scale(0.98); }
+
+    .qty-box {
+      width: 100%; display: flex; justify-content: space-between; align-items: center;
+      background: #FFC107; color: #000; padding: 6px; border-radius: 8px;
+    }
+    .qty-box button { background: none; border: none; color: #000; font-size: 16px; font-weight: 900; padding: 0 10px; }
+    .qty-box span { font-size: 14px; font-weight: 900; }
+
+    /* --- FOOTER --- */
+    .premium-footer {
+      background: #000; border-top: 1px solid #333;
+      padding: 40px 20px 100px 20px; text-align: center; margin-top: 40px;
+    }
+    .footer-icons { display: flex; justify-content: center; gap: 15px; flex-wrap: wrap; margin-bottom: 25px; }
+    .footer-icon-link {
+      width: 45px; height: 45px; background: #1e1e1e; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; text-decoration: none;
+      font-size: 20px; border: 1px solid #333;
+    }
+    .footer-text { font-family: 'Pacifico', cursive; color: #FFC107; font-size: 18px; margin-bottom: 10px; }
+    .copyright { font-size: 12px; color: #555; }
+
+    /* --- FLOATING CART --- */
+    .floating-cart {
+      position: fixed; bottom: 20px; right: 20px;
+      background: linear-gradient(135deg, #FFC107, #FF8F00);
+      width: 60px; height: 60px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 10px 30px rgba(255, 193, 7, 0.3); z-index: 2000;
+      text-decoration: none; border: 3px solid #000;
+    }
+    .cart-icon { font-size: 28px; }
+    .cart-badge {
+      position: absolute; top: -5px; right: -5px; background: #fff; color: #000;
+      font-size: 12px; font-weight: 900; width: 22px; height: 22px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center; border: 2px solid #000;
+      opacity: 0; transform: scale(0); transition: all 0.3s ease;
+    }
+    .cart-badge.show { opacity: 1; transform: scale(1); }
+
+  </style>
+</head>
+<body>
+
+<header id="mainHeader">
+  <div class="topbar">
+    <div class="brand">DailyDishh <span>Kitchen</span></div>
+
+    <div class="header-ticker-container">
+        <div class="header-ticker-text">
+            ✨ PREMIUM TIFFIN SERVICE • FLAT ₹120 OFF ON ITEMS • FREE DELIVERY • 5-STAR HYGIENE • CLICK TO CUSTOMIZE MENU ✨
+        </div>
+    </div>
+    
+    <div class="plans-bar">
+      <a href="plan.html" class="plan-btn">🔥 Try @ ₹129</a>
+      <a href="plan.html" class="plan-btn dark">✨ Week @ ₹599</a>
+      <a href=plan.html" class="plan-btn dark">👑 Month @ ₹2499</a>
+    </div>
+
+    <div class="search-box">
+      <input type="text" id="searchInput" placeholder="Search curries, breads, rice..." onkeyup="filterItems()">
+    </div>
+  </div>
+</header>
+
+<div class="container">
+
+  <div class="slider-container">
+    <img src="https://images.unsplash.com/photo-1540189549336-e6e99c3679fe?auto=format&fit=crop&w=800&q=60" class="active">
+    <img src="https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?auto=format&fit=crop&w=800&q=60">
+    <img src="https://images.unsplash.com/photo-1504674900247-0877df9cc836?auto=format&fit=crop&w=800&q=60">
+  </div>
+
+  <a href="combo.html" class="super-btn">
+    See All Combo Offers →
+  </a>
+
+  <div class="grid" id="menuGrid"></div>
+
+</div>
+
+<footer class="premium-footer">
+  <div class="footer-icons">
+    <a href="https://wa.me/918376091903" class="footer-icon-link" target="_blank">💬</a>
+    <a href="tel:+918376091903" class="footer-icon-link">📞</a>
+    <a href="https://dailydishh.netlify.app" class="footer-icon-link" target="_blank">🌐</a>
+    <a href="https://www.instagram.com/dailydishhkitchen?igsh=amo3cmhkdm84d21t" class="footer-icon-link" target="_blank">📸</a>
+  </div>
+  <p class="footer-text">DailyDishh Kitchen ❤️</p>
+  <div class="copyright">© 2026 DailyDishh. All rights reserved.</div>
+</footer>
+
+<a href="cart.html" class="floating-cart" id="cartFloat">
+  <span class="cart-icon">🛒</span>
+  <span class="cart-badge" id="cartBadge">0</span>
+</a>
+
+<script>
+  // --- MENU DATA ---
+  // Contains ONLY the 4 requested Combos + Full Individual Menu
+  const menuData = [
+    // 1. THE 4 COMBOS
+    { name: "Office Lunch Combo (4 Tawa Roti, Plain Rice Half, Dal, Aloo Sabzi, Green Chutney, Salad, Pickles)", type: "fixed", price: 109, img: "https://img-global.cpcdn.com/recipes/22c60a8d4573548e/1360x1562cq80/%E0%A4%B8%E0%A4%AA%E0%A4%B2-%E0%A4%B5%E0%A4%9C-%E0%A4%B2%E0%A4%9A-%E0%A4%A5%E0%A4%B2-%E0%A4%AE%E0%A4%A1-%E0%A4%A1-%E0%A4%AE%E0%A4%B2-%E0%A4%A6%E0%A4%B2-%E0%A4%9A%E0%A4%B5%E0%A4%B2-%E0%A4%86%E0%A4%B2-%E0%A4%B8%E0%A4%AC%E0%A4%9C-%E0%A4%B0%E0%A4%9F-%E0%A4%B8%E0%A4%B2%E0%A4%A6-%E0%A4%B0%E0%A4%B8%E0%A4%AA-%E0%A4%AE%E0%A4%96%E0%A4%AF-%E0%A4%A4%E0%A4%B8%E0%A4%B5%E0%A4%B0.webp", isCombo: true },
+    { name: "Power Lunch Combo (4 Tawa Roti, Plain Rice Half, Dal, Special Chole, Salad, Pickles)", type: "fixed", price: 129, img: "https://restaurantindia.s3.ap-south-1.amazonaws.com/s3fs-public/2025-05/High%20Protein%20Indian%20Meals%20You%20Should%20Try%20%E2%80%93%20Desi%2C%20Delicious%2C%20and%20Packed%20with%20Power.jpg", isCombo: true },
+    { name: "Paneer Lover Combo (4 Tawa Roti / 7 Poori, Shahi Paneer, Special Chole, Plain Rice Half, Salad, Pickles)", type: "fixed", price: 179, img: "https://cdn.uengage.io/uploads/28289/image-Q5F1AA-1768293023.png", isCombo: true },
+    { name: "Royal Veg Combo (4 Tawa Roti / 7 Poori, Kadhai Paneer, Special Chole, Daal Makhni, Masala Lassi, Lemon Rice, Desi Ghee Halwa, Salad, Pickles)", type: "fixed", price: 279, img: "https://rakskitchen.net/wp-content/uploads/2017/04/indian-lunch-recipes.jpg", isCombo: true },
+
+    // 2. MAIN COURSE (CUSTOMISE)
+    { name: "Special Chole", type: "variable", half: 59, full: 89, img: "https://spicecravings.com/wp-content/uploads/2020/09/Punjabi-Chole-New-1.jpg" },
+    { name: "Matar Paneer", type: "variable", half: 89, full: 129, img: "https://images.unsplash.com/photo-1631452180519-c014fe946bc7" },
+    { name: "Kadhai Paneer", type: "variable", half: 129, full: 169, img: "https://www.whiskaffair.com/wp-content/uploads/2020/08/Kadai-Paneer-2-1.jpg" },
+    { name: "Shahi Paneer", type: "variable", half: 89, full: 139, img: "https://indianshealthyrecipes.com/wp-content/uploads/2024/07/ShahiPaneer-3.jpg" },
+    { name: "Chilli Paneer", type: "variable", half: 139, full: 179, img: "https://images.unsplash.com/photo-1596797038530-2c107229654b" },
+    { name: "Paneer Bhurji", type: "variable", half: 119, full: 159, img: "https://shwetainthekitchen.com/wp-content/uploads/2022/05/Paneer-Bhurji.jpg" },
+    { name: "Mix Veg", type: "variable", half: 59, full: 89, img: "https://shwetainthekitchen.com/wp-content/uploads/2023/03/mixed-vegetable-curry.jpg" },
+    { name: "Aloo Sabzi", type: "variable", half: 49, full: 79, img: "https://khinskitchen.com/wp-content/uploads/2024/04/Indian-potato-curry-02-1138x2048.jpg" },
+    { name: "Chatpata Aloo Gobi", type: "variable", half: 59, full: 89, img: "https://shwetainthekitchen.com/wp-content/uploads/2024/01/aloo-gobi.jpg" },
+    { name: "Dum Aloo", type: "variable", half: 69, full: 99, img: "https://i0.wp.com/binjalsvegkitchen.com/wp-content/uploads/2015/01/Kashmiri-Dum-Aloo-H1.jpg" },
+    { name: "Rajma Spicy", type: "variable", half: 59, full: 89, img: "https://www.livingsmartandhealthy.com/wp-content/uploads/2024/02/rajma-recipe3.jpg" },
+    { name: "Arhar Dal", type: "variable", half: 49, full: 79, img: "https://www.whiskaffair.com/wp-content/uploads/2020/04/North-Indian-Homestyle-Toor-Dal-2-1.jpg" },
+    { name: "Masoor Dal", type: "variable", half: 49, full: 79, img: "https://www.jcookingodyssey.com/wp-content/uploads/2023/06/whole-masoor-dal-recipe.jpg" },
+
+    // 3. RICE & BREADS
+    { name: "Plain Rice", type: "variable", half: 49, full: 79, img: "https://www.thespruceeats.com/thmb/MnZCoKrSCi6HU3Bw_tmBP2qkl14=/750x0/filters:no_upscale():max_bytes(150000):strip_icc():format(webp)/how-to-make-basic-white-rice-2355883-10-5b0da96eba6177003622896e.jpg" },
+    { name: "Lemon Rice", type: "variable", half: 89, full: 159, img: "https://feelgoodfoodie.net/wp-content/uploads/2025/02/Lemon-Rice-09.jpg" },
+    { name: "Tawa Roti (Set of 2)", type: "fixed", price: 10, img: "https://parafit.in/wp-content/uploads/2019/03/Tawa-Roti.jpg" },
+    { name: "Tawa Roti (Set of 4)", type: "fixed", price: 28, img: "https://images.unsplash.com/photo-1565557623262-b51c2513a641" },
+    { name: "Poori (Set of 3)", type: "fixed", price: 14, img: "https://www.cookingwithsiddhi.com/wp-content/uploads/2020/07/poori-recipe-1536x1024.jpg" },
+    { name: "Aloo Paratha", type: "fixed", price: 59, img: "https://www.subbuskitchen.com/wp-content/uploads/2014/07/Paneer-Paratha_Final1.jpg" },
+    { name: "Paneer Paratha", type: "fixed", price: 79, img: "https://cpimg.tistatic.com/08944898/b/4/Paneer-Paratha.jpg" },
+
+    // 4. SIDES
+    { name: "Masala Curd", type: "fixed", price: 59, img: "https://images.slurrp.com/prod/recipe_images/tarla-dalal/burhani-raita-hyderabadi-masala-curd-raita-41483-1619090526_JX0Y64O9L6F8OJ6B6SXA.webp?impolicy=slurrp-20210601&width=1200&height=675" },
+    { name: "Masala Lassi", type: "fixed", price: 39, img: "https://www.flavourstreat.com/wp-content/uploads/2018/06/masala-lassi.jpg" },
+    { name: "Boondi Raita", type: "fixed", price: 49, img: "https://www.whiskaffair.com/wp-content/uploads/2020/12/Boondi-Raita-2-1.jpg" },
+    { name: "Special Kheer", type: "variable", half: 89, full: 149, img: "https://www.sharmispassions.com/wp-content/uploads/2015/06/seviyan-kheer5.jpg" },
+    { name: "Desi Ghee Halwa", type: "variable", half: 79, full: 139, img: "https://www.sweedesi.com/cdn/shop/files/DesiGheeMoongDalHalwa.jpg?v=1764571809" }
+  ];
+
+  let cart = JSON.parse(localStorage.getItem('dailydishh_cart')) || {};
+
+  function getFakePrice(price) { return price + 120; }
+
+  function renderMenu() {
+    const grid = document.getElementById("menuGrid");
+    let allCardsHTML = ""; 
+
+    menuData.forEach(item => {
+      let cardClass = "card item-card";
+      let displayName = item.name;
+      let displayContent = "";
+
+      // Logic for Full Width Combos
+      if (item.isCombo) { 
+        cardClass += " combo-full-width";
+        let splitName = item.name.split('(');
+        displayName = splitName[0].trim();
+        if (splitName[1]) {
+            let ingredients = splitName[1].replace(')', '').split(',');
+            displayContent = `<ul class="combo-list">`;
+            ingredients.forEach(ing => {
+                displayContent += `<li>${ing.trim()}</li>`;
+            });
+            displayContent += `</ul>`;
+        }
+      }
+
+      let cardHTML = `
+        <div class="${cardClass}" data-name="${item.name.toLowerCase()}">
+          <img src="${item.img}" alt="${item.name}">
+          <div class="card-body">
+            <div>
+                <div class="item-name">${displayName}</div>
+                ${displayContent}
+            </div>
+      `;
+
+      if (item.type === "fixed") {
+        const fakePrice = getFakePrice(item.price);
+        const savings = fakePrice - item.price;
+        const qty = cart[item.name] || 0;
+        
+        cardHTML += `
+            <div class="price-display">
+              <del>₹${fakePrice}</del> ₹${item.price}
+              <span class="save-badge">Save ₹${savings}</span>
+            </div>
+            <div id="btn-${item.name.replace(/[^a-zA-Z0-9]/g, '')}">
+              ${qty === 0 
+                ? `<button class="add-btn" onclick="modifyItem('${item.name}', 1)">ADD TO CART</button>` 
+                : `<div class="qty-box">
+                    <button onclick="modifyItem('${item.name}', -1)">−</button>
+                    <span>${qty}</span>
+                    <button onclick="modifyItem('${item.name}', 1)">+</button>
+                   </div>`
+              }
+            </div>
+        `;
+      } else {
+        const fakeHalf = getFakePrice(item.half);
+        const fakeFull = getFakePrice(item.full);
+        
+        cardHTML += `
+            <select class="size-select" id="select-${item.name.replace(/[^a-zA-Z0-9]/g, '')}" onchange="updateBtnState('${item.name}')">
+              <option value="Full">Full - ₹${item.full}</option>
+              <option value="Half">Half - ₹${item.half}</option>
+            </select>
+            <div id="btn-var-${item.name.replace(/[^a-zA-Z0-9]/g, '')}"></div>
+        `;
+      }
+
+      cardHTML += `</div></div>`;
+      allCardsHTML += cardHTML;
+    });
+
+    grid.innerHTML = allCardsHTML;
+
+    // Initialize variable buttons
+    menuData.forEach(item => {
+        if(item.type === "variable") { updateBtnState(item.name); }
+    });
+  }
+
+  function saveCart() {
+    localStorage.setItem('dailydishh_cart',
+JSON.stringify(cart));
+    updateBadge();
+    renderMenu(); 
+  }
+
+  function updateBadge() {
+    let count = 0;
+    for(let key in cart) { count += cart[key]; }
+    const badge = document.getElementById("cartBadge");
+    const cartBtn = document.getElementById("cartFloat");
+    badge.innerText = count;
+    if (count > 0) {
+      badge.classList.add("show");
+      cartBtn.style.transform = "scale(1.1)";
+      setTimeout(() => cartBtn.style.transform = "scale(1)", 200);
+    } else {
+      badge.classList.remove("show");
+    }
+  }
+
+  function modifyItem(name, change) {
+    if (!cart[name]) cart[name] = 0;
+    cart[name] += change;
+    if (cart[name] <= 0) delete cart[name];
+    saveCart();
+  }
+
+  function updateBtnState(name) {
+    const safeName = name.replace(/[^a-zA-Z0-9]/g, '');
+    const select = document.getElementById(`select-${safeName}`);
+    const btnContainer = document.getElementById(`btn-var-${safeName}`);
+    if(!select || !btnContainer) return;
+    
+    const size = select.value; 
+    const cartKey = `${name} (${size})`; 
+    const qty = cart[cartKey] || 0;
+
+    if (qty === 0) {
+      btnContainer.innerHTML = `<button class="add-btn" onclick="modifyVarItem('${name}', '${size}', 1)">ADD ${size.toUpperCase()}</button>`;
+    } else {
+      btnContainer.innerHTML = `
+        <div class="qty-box">
+          <button onclick="modifyVarItem('${name}', '${size}', -1)">−</button>
+          <span>${qty}</span>
+          <button onclick="modifyVarItem('${name}', '${size}', 1)">+</button>
+        </div>
+      `;
+    }
+  }
+
+  function modifyVarItem(name, size, change) {
+    const cartKey = `${name} (${size})`;
+    if (!cart[cartKey]) cart[cartKey] = 0;
+    cart[cartKey] += change;
+    if (cart[cartKey] <= 0) delete cart[cartKey];
+    localStorage.setItem('dailydishh_cart', JSON.stringify(cart));
+    updateBadge();
+    updateBtnState(name); 
+  }
+
+  function filterItems() {
+    const value = document.getElementById("searchInput").value.toLowerCase();
+    const items = document.getElementsByClassName("item-card");
+    for (let i = 0; i < items.length; i++) {
+      const name = items[i].getAttribute("data-name");
+      items[i].style.display = name.includes(value) ? "flex" : "none";
+    }
+  }
+
+  let lastScrollTop = 0;
+  const header = document.getElementById("mainHeader");
+  window.addEventListener("scroll", function() {
+    let now = window.pageYOffset || document.documentElement.scrollTop;
+    if (Math.abs(lastScrollTop - now) <= 60) return;
+    if (now > lastScrollTop && now > 100) { header.classList.add("hide"); } 
+    else { header.classList.remove("hide"); }
+    lastScrollTop = now;
+  });
+
+  let slideIndex = 0;
+  function runSlider() {
+    const slides = document.querySelectorAll(".slider-container img");
+    if(slides.length === 0) return;
+    slides.forEach(img => img.classList.remove("active"));
+    slideIndex++;
+    if (slideIndex > slides.length) slideIndex = 1;
+    slides[slideIndex - 1].classList.add("active");
+  }
+  setInterval(runSlider, 3500);
+
+  renderMenu();
+  updateBadge();
+
+</script>
+</body>
+</html>

@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Your Cart - DailyDishh</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@500;700;800;900&display=swap" rel="stylesheet">
+  
+  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+  <style>
+    /* Styling wahi purani hai, bas button ka color change kiya hai */
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body { margin: 0; font-family: 'Quicksand', sans-serif; background: #141414; color: #fff; min-height: 100vh; display: flex; flex-direction: column; }
+    header { background: rgba(20, 20, 20, 0.95); backdrop-filter: blur(10px); padding: 15px; position: sticky; top: 0; z-index: 1000; box-shadow: 0 4px 20px rgba(0,0,0,0.5); display: flex; align-items: center; gap: 15px; border-bottom: 1px solid #333; }
+    .back-btn { text-decoration: none; color: #FFC107; font-size: 24px; font-weight: 800; padding: 5px; }
+    .page-title { font-family: 'Pacifico', cursive; font-size: 24px; color: #FFC107; margin: 0; }
+    .container { max-width: 800px; margin: auto; width: 100%; padding: 20px 15px; flex: 1; }
+
+    .cart-item { background: #1e1e1e; border-radius: 12px; padding: 15px; margin-bottom: 15px; box-shadow: 0 4px 15px rgba(0,0,0,0.3); display: flex; justify-content: space-between; align-items: center; border: 1px solid #333; border-left: 4px solid #FFC107; }
+    .item-info { flex: 1; padding-right: 10px; }
+    .item-name { font-weight: 800; color: #fff; font-size: 14px; margin-bottom: 4px; line-height: 1.3; }
+    .item-subtext { font-size: 11px; color: #888; margin-bottom: 4px; display: block; }
+    .item-price { color: #FFC107; font-size: 14px; font-weight: 700; }
+    
+    .qty-control { display: flex; align-items: center; gap: 10px; background: #2a2a2a; padding: 6px 10px; border-radius: 8px; border: 1px solid #444; }
+    .qty-btn { border: none; background: none; color: #FFC107; font-weight: 900; font-size: 18px; cursor: pointer; width: 24px; display: flex; justify-content: center; }
+    .qty-val { font-weight: 800; font-size: 15px; color: #fff; width: 20px; text-align: center; }
+
+    .bill-card { background: #1e1e1e; border-radius: 16px; padding: 20px; margin-top: 25px; box-shadow: 0 10px 30px rgba(0,0,0,0.3); border: 1px solid #333; }
+    .bill-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; color: #ccc; font-weight: 600; }
+    .total-row { border-top: 1px dashed #444; padding-top: 15px; margin-top: 10px; font-size: 20px; font-weight: 900; color: #FFC107; }
+
+    .user-form { margin-top: 30px; }
+    .form-group { margin-bottom: 20px; }
+    .form-label { display: block; font-weight: 800; margin-bottom: 8px; font-size: 13px; color: #FFC107; }
+    .form-input { width: 100%; padding: 14px; border: 1px solid #444; border-radius: 10px; font-family: 'Quicksand', sans-serif; font-weight: 600; outline: none; font-size: 15px; background: #2a2a2a; color: #fff; }
+    .form-input:focus { border-color: #FFC107; }
+
+    /* ✅ PAY BUTTON STYLE */
+    .pay-btn {
+      display: block; width: 100%;
+      background: #FFC107; color: #000;
+      text-align: center; padding: 18px;
+      font-size: 16px; font-weight: 900;
+      border-radius: 12px; border: none;
+      cursor: pointer; margin-top: 25px;
+      text-transform: uppercase; letter-spacing: 0.5px;
+    }
+    .pay-btn:disabled { background: #555; cursor: not-allowed; }
+
+    .empty-state { text-align: center; margin-top: 80px; display: none; }
+    .empty-icon { font-size: 70px; margin-bottom: 20px; display: block; opacity: 0.8; }
+    .empty-text { font-weight: 700; color: #888; margin-bottom: 25px; font-size: 18px; }
+    .home-btn { display: inline-block; background: transparent; border: 2px solid #FFC107; color: #FFC107; padding: 12px 30px; text-decoration: none; font-weight: 800; border-radius: 30px; }
+    .has-items { display: block; }
+  </style>
+</head>
+<body>
+
+<header>
+  <a href="index.html" class="back-btn">←</a>
+  <h1 class="page-title">Checkout</h1>
+</header>
+
+<div class="container">
+  
+  <div id="emptyState" class="empty-state">
+    <span class="empty-icon">🛒</span>
+    <div class="empty-text">Your cart is empty</div>
+    <a href="index.html" class="home-btn">Browse Menu</a>
+  </div>
+
+  <div id="cartContent" class="has-items">
+    <div id="cartList"></div>
+
+    <div class="bill-card">
+      <div class="bill-row"><span>Item Total</span><span id="billTotal">₹0</span></div>
+      <div class="bill-row" style="color: #4caf50;"><span>Delivery Fee</span><span>FREE</span></div>
+      <div class="bill-row total-row"><span>Grand Total</span><span id="grandTotal">₹0</span></div>
+    </div>
+
+    <div class="user-form">
+      <div class="form-group">
+        <label class="form-label">YOUR NAME</label>
+        <input type="text" id="userName" class="form-input" placeholder="e.g. Rahul Sharma">
+      </div>
+      <div class="form-group">
+        <label class="form-label">DELIVERY ADDRESS</label>
+        <textarea id="userAddress" class="form-input" rows="3" placeholder="House No, Street, Landmark..."></textarea>
+      </div>
+      
+      <button onclick="startPayment()" class="pay-btn">
+        Pay Now & Place Order
+      </button>
+    </div>
+  </div>
+
+</div>
+
+<script type="module">
+  // ✅ 2. FIREBASE CONFIGURATION (Aapke Screenshot se liya gaya)
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+  import { getFirestore, collection, addDoc } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyBAtTlTgmMY3Vc4lh_J1Vsyz3GQCFqVZvo",
+    authDomain: "dailydishh-9f8db.firebaseapp.com",
+    projectId: "dailydishh-9f8db",
+    storageBucket: "dailydishh-9f8db.firebasestorage.app",
+    messagingSenderId: "205182364015",
+    appId: "1:205182364015:web:d4fda87cb8f7f577ffe09a"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
+
+  // --- MENU DATA (Aapke purane code se same rakha hai) ---
+  const menuData = [
+    { name: "Office Lunch Combo (4 Tawa Roti, Plain Rice Half, Dal, Aloo Sabzi, Green Chutney, Salad, Pickles)", type: "fixed", price: 109 },
+    { name: "Power Lunch Combo (4 Tawa Roti, Plain Rice Half, Dal, Special Chole, Salad, Pickles)", type: "fixed", price: 129 },
+    { name: "Paneer Lover Combo (4 Tawa Roti / 7 Poori, Shahi Paneer, Special Chole, Plain Rice Half, Salad, Pickles)", type: "fixed", price: 179 },
+    { name: "Royal Veg Combo (4 Tawa Roti / 7 Poori, Kadhai Paneer, Special Chole, Daal Makhni, Masala Lassi, Lemon Rice, Desi Ghee Halwa, Salad, Pickles)", type: "fixed", price: 279 },
+    { name: "Special Chole", type: "variable", half: 59, full: 89 },
+    { name: "Matar Paneer", type: "variable", half: 89, full: 129 },
+    { name: "Kadhai Paneer", type: "variable", half: 129, full: 169 },
+    { name: "Shahi Paneer", type: "variable", half: 89, full: 139 },
+    { name: "Chilli Paneer", type: "variable", half: 139, full: 179 },
+    { name: "Paneer Bhurji", type: "variable", half: 119, full: 159 },
+    { name: "Mix Veg", type: "variable", half: 59, full: 89 },
+    { name: "Aloo Sabzi", type: "variable", half: 49, full: 79 },
+    { name: "Chatpata Aloo Gobi", type: "variable", half: 59, full: 89 },
+    { name: "Dum Aloo", type: "variable", half: 69, full: 99 },
+    { name: "Rajma Spicy", type: "variable", half: 59, full: 89 },
+    { name: "Arhar Dal", type: "variable", half: 49, full: 79 },
+    { name: "Masoor Dal", type: "variable", half: 49, full: 79 },
+    { name: "Plain Rice", type: "variable", half: 49, full: 79 },
+    { name: "Lemon Rice", type: "variable", half: 89, full: 159 },
+    { name: "Tawa Roti (Set of 2)", type: "fixed", price: 10 },
+    { name: "Tawa Roti (Set of 4)", type: "fixed", price: 28 },
+    { name: "Poori (Set of 3)", type: "fixed", price: 14 },
+    { name: "Aloo Paratha", type: "fixed", price: 59 },
+    { name: "Paneer Paratha", type: "fixed", price: 79 },
+    { name: "Masala Curd", type: "fixed", price: 59 },
+    { name: "Masala Lassi", type: "fixed", price: 39 },
+    { name: "Boondi Raita", type: "fixed", price: 49 },
+    { name: "Special Kheer", type: "variable", half: 89, full: 149 },
+    { name: "Desi Ghee Halwa", type: "variable", half: 79, full: 139 }
+  ];
+
+  let cart = JSON.parse(localStorage.getItem('dailydishh_cart')) || {};
+  let finalTotalAmount = 0; // Total store karne ke liye
+
+  function getPrice(cartItemName) {
+    let item = menuData.find(i => i.name === cartItemName);
+    if (item && item.type === "fixed") return item.price;
+    if (cartItemName.includes(" (Half)")) {
+      let baseName = cartItemName.replace(" (Half)", "");
+      item = menuData.find(i => i.name === baseName);
+      if (item) return item.half;
+    }
+    if (cartItemName.includes(" (Full)")) {
+      let baseName = cartItemName.replace(" (Full)", "");
+      item = menuData.find(i => i.name === baseName);
+      if (item) return item.full;
+    }
+    return 0;
+  }
+
+  function renderCart() {
+    const list = document.getElementById("cartList");
+    const emptyState = document.getElementById("emptyState");
+    const cartContent = document.getElementById("cartContent");
+    
+    list.innerHTML = "";
+    finalTotalAmount = 0;
+    let itemCount = 0;
+
+    for (let name in cart) {
+      const qty = cart[name];
+      if (qty > 0) {
+        itemCount++;
+        const pricePerItem = getPrice(name);
+        const itemTotal = pricePerItem * qty;
+        finalTotalAmount += itemTotal;
+
+        let displayName = name;
+        let subText = "";
+        if(name.includes("Combo")) {
+            displayName = name.split("(")[0].trim();
+            subText = "Combo Pack";
+        } else if(name.includes("(")) {
+            let parts = name.split("(");
+            displayName = parts[0].trim();
+            subText = parts[1].replace(")","");
+        }
+
+        list.innerHTML += `
+          <div class="cart-item">
+            <div class="item-info">
+              <div class="item-name">${displayName}</div>
+              <span class="item-subtext">${subText}</span>
+              <div class="item-price">₹${pricePerItem} x ${qty} = ₹${itemTotal}</div>
+            </div>
+            <div class="qty-control">
+              <button class="qty-btn" onclick="modifyItem('${name}', -1)">−</button>
+              <span class="qty-val">${qty}</span>
+              <button class="qty-btn" onclick="modifyItem('${name}', 1)">+</button>
+            </div>
+          </div>
+        `;
+      }
+    }
+
+    if (itemCount === 0) {
+      emptyState.style.display = "block";
+      cartContent.style.display = "none";
+    } else {
+      emptyState.style.display = "block"; // Keep default
+      cartContent.style.display = "block";
+      emptyState.style.display = "none";
+    }
+
+    document.getElementById("billTotal").innerText = "₹" + finalTotalAmount;
+    document.getElementById("grandTotal").innerText = "₹" + finalTotalAmount;
+  }
+
+  // Window object par attach kiya taaki HTML se call ho sake
+  window.modifyItem = function(name, change) {
+    if (!cart[name]) cart[name] = 0;
+    cart[name] += change;
+    if (cart[name] <= 0) delete cart[name];
+    localStorage.setItem('dailydishh_cart', JSON.stringify(cart));
+    renderCart();
+  }
+
+  // ✅ 3. PAYMENT LOGIC (Start Payment Function)
+  window.startPayment = function() {
+    const name = document.getElementById("userName").value.trim();
+    const address = document.getElementById("userAddress").value.trim();
+
+    if (!name || !address) {
+      alert("Please enter Name & Address!");
+      return;
+    }
+
+    var options = {
+        "key": "Rzp_test_SCSC6eCSj9m804", // ✅ AAPKI TEST KEY
+        "amount": finalTotalAmount * 100, // Paise mein convert
+        "currency": "INR",
+        "name": "DailyDishh",
+        "description": "Food Order Payment",
+        "handler": async function (response) {
+            // Success hone par ye code chalega
+            const btn = document.querySelector('.pay-btn');
+            btn.innerText = "Placing Order...";
+            btn.disabled = true;
+
+            try {
+                // Firebase mein order save karna
+                await addDoc(collection(db, "orders"), {
+                    customer_name: name,
+                    address: address,
+                    items: cart,
+                    amount: finalTotalAmount,
+                    payment_id: response.razorpay_payment_id,
+                    status: "New Order",
+                    date: new Date().toLocaleString()
+                });
+                
+                alert("Order Placed Successfully! 🎉");
+                localStorage.removeItem('dailydishh_cart'); // Cart khali karo
+                window.location.href = "index.html"; // Home page bhejo
+                
+            } catch(e) {
+                alert("Error saving order: " + e.message);
+                btn.innerText = "Try Again";
+                btn.disabled = false;
+            }
+        },
+        "prefill": { "name": name, "contact": "" },
+        "theme": { "color": "#FFC107" }
+    };
+    
+    var rzp1 = new Razorpay(options);
+    rzp1.open();
+    
+    // Failure handle karna
+    rzp1.on('payment.failed', function (response){
+        alert("Payment Failed: " + response.error.description);
+    });
+  }
+
+  // Initial Load
+  renderCart();
+
+</script>
+</body>
+</html>

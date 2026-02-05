@@ -1,0 +1,482 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Subscription Plans - DailyDishh</title>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&family=Quicksand:wght@500;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    body { 
+      margin: 0; 
+      font-family: 'Quicksand', sans-serif; 
+      background: #141414; /* Premium Dark Theme */
+      color: #fff;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding-bottom: 40px;
+    }
+
+    /* --- HEADER --- */
+    header {
+      background: rgba(20, 20, 20, 0.95);
+      backdrop-filter: blur(10px);
+      padding: 15px;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      box-shadow: 0 4px 20px rgba(0,0,0,0.5);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .brand {
+      font-family: 'Pacifico', cursive;
+      font-size: 24px;
+      color: #FFC107;
+    }
+    .back-link {
+      text-decoration: none;
+      color: #000;
+      font-weight: 800;
+      font-size: 13px;
+      background: #FFC107;
+      padding: 8px 16px;
+      border-radius: 30px;
+    }
+
+    /* --- HERO --- */
+    .hero {
+      text-align: center;
+      padding: 40px 20px 20px;
+      background: linear-gradient(180deg, #1f1f1f 0%, #141414 100%);
+    }
+    .hero h1 { margin: 0; font-size: 28px; color: #fff; font-weight: 900; }
+    .hero span { color: #FFC107; font-family: 'Pacifico', cursive; }
+    .hero p { color: #888; font-size: 14px; margin-top: 8px; font-weight: 600; }
+
+    .container {
+      max-width: 800px;
+      margin: auto;
+      padding: 20px 15px;
+      flex: 1;
+    }
+
+    /* --- CUSTOMIZER TOGGLE --- */
+    .toggle-container { text-align: center; margin-bottom: 30px; }
+    .toggle-btn {
+      background: transparent;
+      border: 2px solid #FFC107;
+      color: #FFC107;
+      padding: 12px 24px;
+      border-radius: 50px;
+      font-size: 14px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex; align-items: center; gap: 8px;
+      transition: all 0.3s;
+      box-shadow: 0 0 15px rgba(255, 193, 7, 0.1);
+    }
+    .toggle-btn:hover, .toggle-btn.active { background: #FFC107; color: #000; }
+
+    /* --- CUSTOMIZER SHEET --- */
+    .customizer-sheet {
+      display: none;
+      background: #1e1e1e;
+      border-radius: 20px;
+      padding: 20px;
+      box-shadow: 0 15px 40px rgba(0,0,0,0.5);
+      margin-bottom: 40px;
+      border: 1px solid #333;
+      animation: slideDown 0.4s ease-out;
+    }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .sheet-header {
+      text-align: center; margin-bottom: 20px; padding-bottom: 10px;
+      border-bottom: 1px dashed #444;
+    }
+    .sheet-header h3 { margin: 0; color: #FFC107; font-size: 18px; }
+    .sheet-header p { margin: 5px 0 0 0; color: #888; font-size: 12px; }
+
+    .day-row {
+      background: #141414;
+      border: 1px solid #333;
+      border-radius: 12px;
+      padding: 15px;
+      margin-bottom: 15px;
+    }
+    .day-label {
+      font-size: 14px; font-weight: 800; color: #fff; margin-bottom: 10px;
+    }
+    .select-group {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 8px;
+    }
+    @media (min-width: 600px) {
+      .select-group { grid-template-columns: 1.5fr 1.5fr 1fr 0.8fr 0.8fr; }
+    }
+    .custom-select {
+      width: 100%; padding: 10px; border-radius: 8px;
+      border: 1px solid #444; font-family: 'Quicksand', sans-serif;
+      font-weight: 600; font-size: 11px;
+      background: #2a2a2a; color: #fff; outline: none;
+    }
+    .custom-select:focus { border-color: #FFC107; }
+    .fixed-item {
+      background: #333; border-radius: 8px; display: flex;
+      align-items: center; justify-content: center; font-size: 11px;
+      font-weight: 700; color: #aaa; padding: 10px; text-align: center;
+    }
+
+    /* --- PLAN CARDS --- */
+    .plan-card {
+      background: #1e1e1e;
+      border-radius: 20px;
+      padding: 25px;
+      margin-bottom: 25px;
+      position: relative;
+      border: 1px solid #333;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+      overflow: hidden;
+      transition: transform 0.2s;
+    }
+    .plan-card:hover { transform: translateY(-5px); }
+
+    .plan-card.popular {
+      border: 2px solid #FFC107;
+      background: linear-gradient(145deg, #1e1e1e, #252525);
+    }
+    .badge {
+      position: absolute;
+      top: 15px; right: 15px;
+      background: #FFC107;
+      color: #000;
+      font-size: 10px;
+      font-weight: 900;
+      padding: 5px 10px;
+      border-radius: 20px;
+      text-transform: uppercase;
+      box-shadow: 0 4px 10px rgba(255, 193, 7, 0.3);
+    }
+
+    .plan-name { font-size: 22px; font-weight: 800; color: #fff; margin-bottom: 5px; }
+    .plan-subtitle { font-size: 13px; color: #aaa; margin-bottom: 20px; font-weight: 600; }
+
+    .price-block {
+      display: flex; align-items: baseline; gap: 10px;
+      margin-bottom: 20px; border-bottom: 1px dashed #444; padding-bottom: 20px;
+    }
+    .current-price { font-size: 32px; font-weight: 900; color: #FFC107; }
+    .old-price { text-decoration: line-through; color: #666; font-size: 16px; font-weight: 600; }
+    .save-text { color: #4caf50; font-size: 12px; font-weight: 800; background: rgba(76, 175, 80, 0.1); padding: 4px 8px; border-radius: 4px; }
+
+    .features { list-style: none; padding: 0; margin: 0 0 25px 0; }
+    .features li {
+      margin-bottom: 12px; font-size: 14px; color: #ddd;
+      display: flex; align-items: flex-start; line-height: 1.4;
+    }
+    .features li::before {
+      content: "✔"; color: #FFC107; margin-right: 10px; font-weight: 900;
+    }
+
+    .plan-btn {
+      display: block; width: 100%; text-align: center; padding: 16px;
+      border-radius: 12px; font-size: 16px; font-weight: 900;
+      text-decoration: none; text-transform: uppercase; letter-spacing: 0.5px;
+      transition: opacity 0.2s; border: none; cursor: pointer;
+    }
+    .btn-outline { border: 2px solid #FFC107; color: #FFC107; background: transparent; }
+    .btn-fill { background: #FFC107; color: #000; box-shadow: 0 5px 20px rgba(255, 193, 7, 0.3); }
+    .plan-btn:active { opacity: 0.8; transform: scale(0.98); }
+
+    .info-note { text-align: center; font-size: 12px; color: #666; margin-top: 10px; line-height: 1.5; }
+
+    /* --- TOAST --- */
+    .error-toast {
+      position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
+      background: #d32f2f; color: #fff; padding: 12px 24px; border-radius: 50px;
+      font-weight: 700; box-shadow: 0 5px 20px rgba(0,0,0,0.5); z-index: 2000;
+      display: none; width: 90%; max-width: 400px; text-align: center; font-size: 12px;
+    }
+
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="brand">DailyDishh</div>
+  <a href="index.html" class="back-link">Back to Menu</a>
+</header>
+
+<div class="error-toast" id="errorToast">⚠️ Premium Limit: That dish is available only once a week! We adjusted your menu.</div>
+
+<div class="hero">
+  <h1>Choose Your <span>Plan</span></h1>
+  <p>Fresh Home-Style Food, Delivered Daily.</p>
+</div>
+
+<div class="container">
+
+  <div class="toggle-container">
+    <button class="toggle-btn" onclick="toggleCustomizer()">
+      <span style="font-size:18px">✏️</span> Build Your Own Menu
+    </button>
+  </div>
+
+  <div class="customizer-sheet" id="customizerSheet">
+    <div class="sheet-header">
+      <h3>Weekly Menu Builder</h3>
+      <p>Rice & Salad included daily. Premium items (Paneer, Chole, Kofta, Dal Makhni) limited to once a week.</p>
+    </div>
+    <div id="daysContainer"></div>
+  </div>
+
+  <div class="plan-card">
+    <div class="plan-name">Trial Meal</div>
+    <div class="plan-subtitle">Taste the quality for one day</div>
+    
+    <div class="price-block">
+      <span class="current-price">₹129</span>
+      <span class="old-price">₹199</span>
+      <span class="save-text">SAVE 35%</span>
+    </div>
+
+    <ul class="features">
+      <li><strong>Special Chole</strong> Included (Chef's Special)</li>
+      <li>4 Tawa Roti OR 7 Poori</li>
+      <li>Fresh Seasonal Salad</li>
+      <li>Pickle & Green Chutney</li>
+      <li>Perfect for first-time customers</li>
+    </ul>
+
+    <button onclick="submitPlan('Trial')" class="plan-btn btn-outline">Order Trial Now</button>
+  </div>
+
+  <div class="plan-card popular">
+    <span class="badge">Most Popular</span>
+    <div class="plan-name">Weekly Plan</div>
+    <div class="plan-subtitle">6 Days Subscription (Mon-Sat)</div>
+    
+    <div class="price-block">
+      <span class="current-price">₹599</span>
+      <span class="old-price">₹1029</span>
+      <span class="save-text">BIG SAVINGS</span>
+    </div>
+
+    <ul class="features">
+      <li><strong>₹100 per meal effectively</strong></li>
+      <li>4 Tawa Roti OR 7 Poori (Your choice daily)</li>
+      <li>Different Menu Every Day (Paneer, Rajma, Mix Veg, etc.)</li>
+      <li>Rice, Dal, Seasonal Sabzi included</li>
+      <li>Salad & Pickle included</li>
+      <li>Free Home Delivery</li>
+    </ul>
+
+    <button onclick="submitPlan('Weekly')" class="plan-btn btn-fill">Start Weekly Plan</button>
+  </div>
+
+  <div class="plan-card">
+    <span class="badge" style="background:#4caf50; color:#fff;">Best Value</span>
+    <div class="plan-name">Monthly Plan</div>
+    <div class="plan-subtitle">26 Days Subscription</div>
+    
+    <div class="price-block">
+      <span class="current-price">₹2499</span>
+      <span class="old-price">₹3500</span>
+      <span class="save-text">₹96 / MEAL</span>
+    </div>
+
+    <ul class="features">
+      <li><strong>Cheapest Option</strong> (Under ₹96/meal)</li>
+      <li>4 Tawa Roti OR 7 Poori (Your choice daily)</li>
+      <li>Premium Menu Rotation (Paneer Specials included)</li>
+      <li>Complete Thali Experience daily</li>
+      <li>Flexible: Skip a meal & carry forward credit</li>
+      <li>Priority Free Delivery</li>
+    </ul>
+
+    <button onclick="submitPlan('Monthly')" class="plan-btn btn-outline">Join Monthly Plan</button>
+  </div>
+
+  <p class="info-note">
+    * All plans include 4 Roti or 7 Poori standard.<br>
+    * Weekly/Monthly plans are valid for Lunch or Dinner.<br>
+    * Call us to customize your spice levels.
+  </p>
+
+</div>
+
+<script>
+  // --- DATA ---
+  const days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+  
+  // Premium Items (Limited to Once Per Week)
+  const premiumItems = ["Shahi Paneer", "Amritsari Chole", "Dal Makhni", "Malai Kofta"];
+
+  const defaults = [
+    { sabzi: "Dum Aloo Kashmiri", dal: "Arhar Dal" },
+    { sabzi: "Hyderabadi Mix Veg", dal: "Masoor Dal" },
+    { sabzi: "Shahi Paneer", dal: "Dal Tadka" }, // Premium
+    { sabzi: "Amritsari Chole", dal: "Jeera Rice" }, // Premium
+    { sabzi: "Masala Aloo Gobi", dal: "Arhar Dal" },
+    { sabzi: "Punjabi Aloo Matar", dal: "Dal Fry" }
+  ];
+
+  // --- RENDER CUSTOMIZER ROWS ---
+  const container = document.getElementById("daysContainer");
+  
+  days.forEach((day, index) => {
+    let def = defaults[index];
+    
+    let html = `
+      <div class="day-row">
+        <div class="day-label">${day}</div>
+        <div class="select-group">
+          <select class="custom-select bread-select">
+            <option value="4 Tawa Roti" selected>4 Tawa Roti</option>
+            <option value="7 Poori">7 Poori</option>
+            <option value="None">No Bread</option>
+          </select>
+          
+          <select class="custom-select sabzi-select" onchange="validateMenu(this, ${index})">
+            <option value="Dum Aloo Kashmiri" ${def.sabzi==='Dum Aloo Kashmiri'?'selected':''}>Dum Aloo Kashmiri</option>
+            <option value="Hyderabadi Mix Veg" ${def.sabzi==='Hyderabadi Mix Veg'?'selected':''}>Hyderabadi Mix Veg</option>
+            <option value="Punjabi Aloo Matar" ${def.sabzi==='Punjabi Aloo Matar'?'selected':''}>Punjabi Aloo Matar</option>
+            <option value="Masala Aloo Gobi" ${def.sabzi==='Masala Aloo Gobi'?'selected':''}>Masala Aloo Gobi</option>
+            
+            <optgroup label="Premium (Max 1/Week)">
+                <option value="Shahi Paneer" ${def.sabzi==='Shahi Paneer'?'selected':''}>★ Shahi Paneer</option>
+                <option value="Amritsari Chole" ${def.sabzi==='Amritsari Chole'?'selected':''}>★ Amritsari Chole</option>
+                <option value="Malai Kofta">★ Malai Kofta</option>
+            </optgroup>
+
+            <option value="None">No Sabzi</option>
+          </select>
+          
+          <select class="custom-select dal-select" onchange="validateMenu(this, ${index})">
+            <option value="Arhar Dal" ${def.dal==='Arhar Dal'?'selected':''}>Arhar Dal</option>
+            <option value="Masoor Dal" ${def.dal==='Masoor Dal'?'selected':''}>Masoor Dal</option>
+            <option value="Dal Fry" ${def.dal==='Dal Fry'?'selected':''}>Dal Fry</option>
+            <option value="Dal Tadka" ${def.dal==='Dal Tadka'?'selected':''}>Dal Tadka</option>
+            <optgroup label="Premium (Max 1/Week)">
+                <option value="Dal Makhni">★ Dal Makhni</option>
+            </optgroup>
+            <option value="None">No Dal</option>
+          </select>
+
+          <select class="custom-select rice-select">
+            <option value="Rice" selected>Rice</option>
+            <option value="None">No Rice</option>
+          </select>
+
+          <div class="fixed-item">🥗 Salad</div>
+        </div>
+      </div>
+    `;
+    container.innerHTML += html;
+  });
+
+  // --- TOGGLE LOGIC ---
+  let isCustomized = false;
+
+  function toggleCustomizer() {
+    const sheet = document.getElementById("customizerSheet");
+    const btn = document.querySelector(".toggle-btn");
+    
+    if (sheet.style.display === "block") {
+      sheet.style.display = "none";
+      btn.classList.remove("active");
+      btn.innerHTML = `<span style="font-size:18px">✏️</span> Build Your Own Menu`;
+      isCustomized = false;
+    } else {
+      sheet.style.display = "block";
+      btn.classList.add("active");
+      btn.innerHTML = `<span style="font-size:18px">❌</span> Close Customizer`;
+      isCustomized = true;
+    }
+  }
+
+  // --- SMART AUTO-SWITCH LOGIC ---
+  function validateMenu(changedSelect, currentIndex) {
+    const newValue = changedSelect.value;
+    
+    // Check if the selected item is a Premium Restricted item
+    if (premiumItems.includes(newValue) || newValue === "Dal Makhni") {
+        
+        // Determine if we are checking sabzis or dals
+        const isSabzi = changedSelect.classList.contains('sabzi-select');
+        const selector = isSabzi ? '.sabzi-select' : '.dal-select';
+        const allSelects = document.querySelectorAll(selector);
+
+        // Loop through all days to find duplicates
+        allSelects.forEach((sel, idx) => {
+            // If it's NOT the dropdown we just changed, AND it has the same value
+            if (idx !== currentIndex && sel.value === newValue) {
+                
+                // Show Error Toast
+                const toast = document.getElementById("errorToast");
+                toast.innerText = `⚠️ ${newValue} is available only once a week! We swapped ${days[idx]}.`;
+                toast.style.display = "block";
+                setTimeout(() => { toast.style.display = "none"; }, 4000);
+
+                // Auto-switch the OLD selection to a standard item
+                if (isSabzi) {
+                    sel.value = "Masala Aloo Gobi";
+                } else {
+                    sel.value = "Dal Fry";
+                }
+            }
+        });
+    }
+  }
+
+  // --- WHATSAPP GENERATOR ---
+  function submitPlan(planType) {
+    let message = "";
+    // Prices based on your specific requirements
+    let price = (planType === 'Weekly') ? '599' : (planType === 'Monthly') ? '2499' : '129';
+    let duration = (planType === 'Weekly') ? '6 Days' : (planType === 'Monthly') ? '26 Days' : '1 Day';
+
+    if (isCustomized) {
+      // BUILD DETAILED CUSTOM MESSAGE
+      message = `Hello DailyDishh! I want to subscribe to the *${planType} Custom Plan* (₹${price}).%0A%0A*MY CUSTOM MENU:*%0A`;
+      const breadInputs = document.querySelectorAll('.bread-select');
+      const sabziInputs = document.querySelectorAll('.sabzi-select');
+      const dalInputs = document.querySelectorAll('.dal-select');
+      const riceInputs = document.querySelectorAll('.rice-select');
+
+      days.forEach((day, i) => {
+        let b = breadInputs[i].value;
+        let s = sabziInputs[i].value;
+        let d = dalInputs[i].value;
+        let r = riceInputs[i].value;
+        
+        if (b==="None" && s==="None" && d==="None") {
+           message += `*${day.substring(0,3)}:* SKIP%0A`;
+        } else {
+           let line = [];
+           if(b!=="None") line.push(b);
+           if(s!=="None") line.push(s);
+           if(d!=="None") line.push(d);
+           if(r!=="None") line.push(r);
+           message += `*${day.substring(0,3)}:* ${line.join(" + ")}%0A`;
+        }
+      });
+      message += `%0APlease confirm my booking.`;
+
+    } else {
+      // DEFAULT MESSAGE
+      message = `Hello DailyDishh!%0A%0AI want to subscribe to the *${planType} Plan* (${duration}) for ₹${price}.%0A%0AI will take the *Standard Default Menu*.%0A%0APlease confirm details.`;
+    }
+
+    window.open(`https://wa.me/918376091903?text=${message}`, "_blank");
+  }
+
+</script>
+
+</body>
+</html>
